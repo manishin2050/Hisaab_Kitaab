@@ -1,404 +1,161 @@
-{% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Khata</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="{% static 'index.css' %}" />
-    <style>
-      body {
-        background: #f4f6f9;
-        font-family: "Segoe UI", sans-serif;
-        color: #333;
-      }
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Khata</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+<style>
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* black → white */
+  }
 
-      .container {
-        margin-top: 40px;
-      }
+</style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-700 ">
+  <!-- Navbar -->
+  <nav class=" fixed w-full bg-white shadow dark:bg-gray-900 ">
+    <div class="container mx-auto flex items-center justify-between px-4 py-3">
+      <a href="{% url 'khata:home' %}" class="text-lg font-semibold text-gray-800 dark:text-gray-200">Khata</a>
 
-      .table-card {
-        background: #fff;
-        border-radius: 15px;
-        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-      }
-
-      .table {
-        margin-bottom: 0;
-      }
-
-      .table thead {
-        background: linear-gradient(90deg, #0d6efd, #6610f2);
-        color: #fff;
-        font-size: 15px;
-      }
-
-      .table tbody tr {
-        transition: all 0.2s ease-in-out;
-      }
-
-      .table tbody tr:hover {
-        background: rgba(13, 110, 253, 0.05);
-      }
-
-      .table td,
-      .table th {
-        vertical-align: middle;
-        text-align: center;
-        padding: 12px;
-      }
-
-      .total-card {
-        margin-top: 20px;
-        background: #fff;
-        border-radius: 15px;
-        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-        padding: 15px;
-      }
-
-      .btnwrap {
-        margin-top: 25px;
-      }
-
-      .btn {
-        border-radius: 30px;
-        padding: 10px 25px;
-        font-weight: 500;
-      }
-
-      .btn-primary {
-        background: linear-gradient(90deg, #0d6efd, #6610f2);
-        border: none;
-      }
-
-      .btn-dark {
-        background: linear-gradient(90deg, #343a40, #212529);
-        border: none;
-      }
-
-      .paymentbox .alert {
-        border-radius: 12px;
-        font-size: 14px;
-        margin-bottom: 10px;
-        box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.08);
-      }
-
-      .mor,
-      .dataform {
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
-      }
-
-      .mor h3,
-      .dataform h3 {
-        font-weight: 600;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="conatiner" class="container">
-    <div class="tablecover">
-      <table class="table tab1">
-        <thead>
-          <tr>
-            <th scope="col" >Date(MM-DD-YY)</th>
-            <th scope="col" >Manish</th>
-            <th scope="col" >Kazim</th>
-            <th scope="col" >Samay</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for mani,kazi,sam,des in obj %}
-            <tr>
-              <td>{{des.date}}</td>
-              <td
-                {% if mani.checkbox == 'yes' %}
-                  class="bg-success text-white fw-bold"
-                {% else %}
-                  class="bg-danger text-white fw-bold"
-                {% endif %}
-              >
-                {{mani.price}} Rs
-                {% if mani.checkbox == 'yes' %}
-                <span class="badge bg-warning ms-2">-{{mani.discount}}</span>
-                {% endif %}
-              </td>
-
-              <td
-                {% if kazi.checkbox == 'yes' %}
-                  class="bg-success text-white fw-bold"
-                {% else %}
-                  class="bg-danger text-white fw-bold"
-                {% endif %}
-              >
-                {{kazi.price}} Rs
-                {% if kazi.checkbox == 'yes' %}
-                <span class="badge bg-warning ms-2">-{{kazi.discount}}</span>
-                {% endif %}
-              </td>
-
-              <td
-                {% if sam.checkbox == 'yes' %}
-                  class="bg-success text-white fw-bold"
-                {% else %}
-                  class="bg-danger text-white fw-bold"
-                {% endif %}
-              >
-                {{sam.price}} Rs
-                {% if sam.checkbox == 'yes' %}
-                <span class="badge bg-warning ms-2">-{{sam.discount}}</span>
-                {% endif %}
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-      </table>
-    </div>
-
-      <!-- Totals Section -->
-      <div class="total-card">
-        <h5 class="mb-3 fw-bold">Summary</h5>
-        <div class="row text-center">
-          <div class="col-md-4">
-            <p>
-              <strong>Manish:</strong> Rent - 
-              <span class="text-warning">{{discount_manish}}</span> =
-              <span class="text-success">{{manish_total}} Rs</span>
-            </p>
-          </div>
-          <div class="col-md-4">
-            <p>
-              <strong>Kazim:</strong> Rent - 
-              <span class="text-warning">{{discount_kazim}}</span> =
-              <span class="text-success">{{kazim_total}} Rs</span>
-            </p>
-          </div>
-          <div class="col-md-4">
-            <p>
-              <strong>Samay:</strong> Rent - 
-              <span class="text-warning">{{discount_samay}}</span> =
-              <span class="text-success">{{samay_total}} Rs</span>
-            </p>
-          </div>
-        </div>
-      </div>
-        <div class="btnwrap d-flex justify-content-around ">
-      <div id="btn" class="btn btn-primary px-5">Add</div>
-      <div id="exportbtn" class="btn btn-dark px-5">Export</div>
-      <div id="dataform" class="dataform">
-      <form  action="/download_excel/" method='post'>
-       {% csrf_token %}
-          <div class="d-flex gap-5"><h3>Date: {{ date }}</h3> <span id="Warbtn2" class="btn btn-warning">X</span></div>
-
-            <div class="mb-3">
-              <label for="exampleInputEmail1" class="form-label">from</label>
-              <input
-                name="from"
-                type="date"
-                class="form-control"
-                id="exampleInputEmail1"
-                aria-describedby="emailHelp"
-              />
-            </div>
-            <div class="mb-3">
-              <label for="exampleInputEmail1" class="form-label">to</label>
-              <input
-                name="to"
-                type="date"
-                class="form-control"
-                id="exampleInputEmail1"
-                aria-describedby="emailHelp"
-              />
-            </div>
-          <button type="submit" id="downloadbtn" class="btn btn-dark px-5"> Download  </button>
-      </form>
-      </div>
-      {% comment %} <a href="/download_excel"  ><div id="download" class="btn  btn-dark px-5"> Download </div></a> {% endcomment %}
-        </div>
-      <div id="mor_wrap" class="mor_wrap">
-        <div id="mor" class="mor">
-          <div class="d-flex gap-5"><h3>Date: {{ date }}</h3> <span id="Warbtn" class="btn btn-warning">X</span></div>
-          <form action="/" method="post">
+      <div>
+        {% if user.is_authenticated %}
+          <span class="mr-4 text-gray-700 dark:text-gray-200">Hi, {{ user.username|capfirst }}</span>
+          <form action="{% url 'khata:logout' %}" method="post" class="inline">
             {% csrf_token %}
-            <div class="mb-3">
-              <label for="exampleInputEmail1" class="form-label">Price</label>
-              <input
-              required
-                name="price"
-                type="number"
-                class="form-control"
-                id="exampleInputEmail1"
-                aria-describedby="emailHelp"
-              />
-            </div>
-            <div class="mb-3">
-              <label for="exampleInputPassword1" class="form-label">desc</label>
-              <input
-              required
-                name="desc"
-                type="text"
-                class="form-control"
-                id="exampleInputPassword1"
-              />
-            </div>
-            <h3>Payment By:-</h3>
-              <input id="paymentby2" class="rounded my-2 px-2 text-black fw-bold" disabled  name="" type="text">
-              <input id="paymentby" class="rounded my-2 px-2 text-black fw-bold" hidden  name="paymentby" type="text">
-            <div class="mb-3 form-check">
-              <input
-                name="gett1"
-                onchange="get1()"
-                value="no"
-                type="checkbox"
-                class="form-check-input single-check"
-                id="exampleCheck01"
-              />
-              <label class="form-check-label" for="exampleCheck01"
-                >Manish</label
-              >
-            </div>
-            <div class="mb-3 form-check">
-              <input
-                onchange="get2()"
-                name="gett2"
-                value="no"
-                type="checkbox"
-                class="form-check-input single-check"
-                id="exampleCheck2"
-              />
-              <label class="form-check-label" for="exampleCheck2">Kazim</label>
-            </div>
-            <div class="mb-3 form-check">
-              <input
-                onchange="get3()"
-                name="gett3"
-                value="no"
-                type="checkbox"
-                class="form-check-input single-check"
-                id="exampleCheck3"
-              />
-              <label class="form-check-label" for="exampleCheck3">Samay</label>
-            </div>
-            <button  id="submit" type="submit" class="btn btn-primary">
-              Submit
+            <button type="submit" 
+              class="px-3 py-1 text-sm border border-red-500 text-red-500 rounded hover:bg-red-500 hover:text-white transition">
+              Logout
             </button>
           </form>
-        </div>
-      </div>
-      <p class="text-center"><span class="fs-3">Room Rent:<span class="text-danger text-center fs-1 fw-bold">30000</span></span></p>
-      <p class="text-center"><span class="fs-3">Total :<span class="text-success text-center fs-1 fw-bold">{{total}}</span></span></p>
-      <div id="paymentbox"  class="paymentbox ">
-      {% for man,kaz,sams,dess in objs  %}
-      <div class="alert alert-success  " role="alert">
-        <span class="text-danger">{{dess.paymentby}}</span> Rs paid for <span class="text-danger">{{dess.desc}}</span> at {{dess.date}} {{dess.times}}
-      </div>
-
-      {% endfor %}
+        {% else %}
+          <a href="{% url 'khata:login' %}" 
+             class="px-3 py-1 text-sm border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white transition">
+            Login
+          </a>
+        {% endif %}
       </div>
     </div>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-      crossorigin="anonymous"
-    ></script>
-    <script>
-      let btn = document.getElementById("btn");
-      let Warbtn = document.getElementById("Warbtn");
-      let mor = document.getElementById("mor");
-      let mor_wrap = document.getElementById("mor_wrap");
-      let container = document.getElementById("container");
-      let submit = document.getElementById("submit");
-      let dataform = document.getElementById("dataform");
-      let exportbtn = document.getElementById("exportbtn");
-      let downloadbtn = document.getElementById("downloadbtn");
-      let paymentbox = document.getElementById("paymentbox");
-      btn.addEventListener("click", () => {
-        mor.style.display = "block";
-        mor_wrap.style.display = "flex";
-        paymentbox.style.display ="none";
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container mx-auto px-4 py-6">
+    {% block content %}{% endblock %}
+  </div>
 
 
-      });
-      exportbtn.addEventListener("click", () => {
-        mor_wrap.style.display = "flex";
-        dataform.style.display="block"
-        paymentbox.style.display ="none"
-      });
-      downloadbtn.addEventListener("click", () => {
-        mor_wrap.style.display = "none";
-        dataform.style.display="none"
-        paymentbox.style.display ="block"
-      });
-      Warbtn.addEventListener("click",()=>{
-        mor.style.display = "none";
-        mor_wrap.style.display = "none";
-        paymentbox.style.display ="block"
-      })
-      Warbtn2.addEventListener("click",()=>{
-        dataform.style.display="none"
-        mor_wrap.style.display = "none";
-        paymentbox.style.display ="block"
-      })
 
-      let id1 = document.getElementById("exampleCheck01");
-      let id2 = document.getElementById("exampleCheck2");
-      let id3 = document.getElementById("exampleCheck3");
-      let paymentby = document.getElementById("paymentby");
-      let paymentby2 = document.getElementById("paymentby2");
-      function get1() {
-        if (id1.checked) {
-          id1.value = "yes";
-          paymentby.value="manish"
-          paymentby2.value="manish"
-          console.log(id1);
-        } else {
-          id1.value = "no";
-          console.log(id1);
+  <!-- Mobile Footer -->
+  <div class="fixed bottom-0 left-0 w-full bg-white shadow-md dark:bg-gray-900 flex justify-around items-center py-2 md:hidden">
+    <!-- Home -->
+    <a href="{% url 'khata:home' %}" class="hover:text-blue-600 flex flex-col items-center text-gray-600 dark:text-gray-300">
+      <i data-feather="home" class="w-6 h-6"></i>
+      <span class="text-xs">Home</span>
+    </a>
+
+    <!-- Shop -->
+     {% if user.is_authenticated %}
+    <a href="{% url 'khata:shopping' %}" class="hover:text-blue-600 flex flex-col items-center text-gray-600 dark:text-gray-300">
+      <i data-feather="shopping-bag" class="w-6 h-6"></i>
+      <span class="text-xs">Shop</span>
+    </a>
+     {% else %}
+    <a href="{% url 'khata:login' %}" class="hover:text-blue-600 flex flex-col items-center text-gray-600 dark:text-gray-300">
+      <i data-feather="shopping-bag" class="w-6 h-6"></i>
+      <span class="text-xs">Shop</span>
+    </a>
+     {% endif %}
+
+
+    <!-- Add (Big Button in Center, floating up a little) -->
+     {% if user.is_authenticated and request.resolver_match.url_name != "profile" %}
+    <a href="#" id="remove_form_hidden_plus" class="relative -top-4 bg-blue-600 p-4 border border-gray-700 dark:border-gray-200 border-t-0 rounded-full shadow-lg text-white hover:rotate-90 hover:bg-red-500 transform transition-transform duration-600">
+      <i data-feather="plus" class="w-6 h-6"></i>
+    </a>
+
+    {% endif %}
+    <!-- Search -->
+     {% if user.is_authenticated and request.resolver_match.url_name != "profile" %}
+     <a href="#" id="remove_form_hidden_plus2" class="hover:text-blue-600 flex flex-col items-center text-gray-600 dark:text-gray-300">
+       <i data-feather="search" class="w-6 h-6"></i>
+       <span class="text-xs">Search</span>
+      </a>
+
+      {% endif %}
+    <!-- User -->
+     {% if user.is_authenticated  %}
+     <a href="{% url 'khata:profile' %}" class="hover:text-blue-600 flex flex-col items-center text-gray-600 dark:text-gray-200">
+      <i data-feather="user" class="w-6 h-6"></i>
+      <span class="text-xs">Profile</span>
+    </a>
+     {% else %}
+     <a href="{% url 'khata:login' %}" class="hover:text-blue-600 flex flex-col items-center text-gray-600 dark:text-gray-200">
+       <i data-feather="user" class="w-6 h-6"></i>
+       <span class="text-xs">Profile</span>
+      </a>
+      {% endif %}
+  </div>
+
+<script>
+  feather.replace()
+
+  // Add toggle for plus button (mobile footer)
+  document.addEventListener("DOMContentLoaded", () => {
+    const plusBtn = document.getElementById("remove_form_hidden_plus");
+    if (plusBtn) {
+      plusBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const form = document.getElementById("form_plate");
+        if (form) {
+          form.classList.toggle("hidden");
         }
-      }
-      function get2() {
-        if (id2.checked) {
-          id2.value = "yes";
-          paymentby.value="kazim"
-          paymentby2.value="kazim"
-          console.log(id2);
-        } else {
-          id2.value = "no";
-          console.log(id2);
+      });
+    } 
+    const searchBtn = document.getElementById("remove_form_hidden_plus2");
+    if (searchBtn) {
+      searchBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const form2 = document.getElementById("form_plate2");
+        if (form2) {
+          form2.classList.toggle("hidden");
         }
-      }
-      function get3() {
-        if (id3.checked) {
-          id3.value = "yes";
-          paymentby.value="samay"
-          paymentby2.value="samay"
-          console.log(id3);
-        } else {
-          id3.value = "no";
-          console.log(id3);
-        }
-      }
-  // Get all checkboxes
-  const checkboxes = document.querySelectorAll(".single-check");
-
-  checkboxes.forEach((checkbox) => {
-    checkbox.addEventListener("change", function () {
-      if (this.checked) {
-        // Uncheck all other checkboxes
-        checkboxes.forEach((cb) => {
-          if (cb !== this) cb.checked = false;
-        });
-      }
-    });
+      });
+    }
   });
-    </script>
-  </body>
+</script>
+
+
+<script>
+
+  const priceInput = document.getElementById("priceInput");
+
+  priceInput.addEventListener("input", function () {
+    let val = priceInput.value;
+
+    // सिर्फ numbers और +, - , * , / ही allow करो
+    if (/^[0-9+\-*/\s]+$/.test(val)) {
+      try {
+        // calculate करो (eval का simple use, लेकिन safer तरीका Function constructor है)
+        let result = Function("return " + val)();
+
+        // अगर result number है तो input को result से replace कर दो
+        if (!isNaN(result)) {
+          priceInput.dataset.calculated = result; // store actual calculation
+        }
+      } catch (e) {
+        // अगर कुछ गलत है तो ignore
+      }
+    }
+  });
+
+  // जब input से बाहर क्लिक करे (blur event) तब final result set कर दो
+  priceInput.addEventListener("blur", function () {
+    if (priceInput.dataset.calculated) {
+      priceInput.value = priceInput.dataset.calculated;
+    }
+  });
+</script>
+
+</body>
 </html>
