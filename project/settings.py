@@ -51,6 +51,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://hisaab-kitaab-w1qm.onrender.com",
+]
+
+
+
 ROOT_URLCONF = 'project.urls'
 
 TEMPLATES = [
