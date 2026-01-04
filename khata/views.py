@@ -47,58 +47,14 @@ def download(request):
             end_date = edate
         except ValueError:
             return HttpResponse("Invalid date format. Use MM/DD/YY.", status=400)
-        # manish=Manish.objects.filter(date__range=(start_date,end_date))
-        # kazim=Kazim.objects.filter(date__range=(start_date,end_date))
-        # samay=Samay.objects.filter(date__range=(start_date,end_date))
+
         descc=Description.objects.filter(date__range=(start_date,end_date)).prefetch_related('spilts').order_by('-id')
 
-        # total_manish = format(Manish.objects.filter(date__range=(start_date,end_date)).aggregate(Sum('price'))['price__sum'] or 0.0, ".2f")
-        # total_kazim = format(Kazim.objects.filter(date__range=(start_date,end_date)).aggregate(Sum('price'))['price__sum'] or 0.0, ".2f")
-        # total_samay = format(Samay.objects.filter(date__range=(start_date,end_date)).aggregate(Sum('price'))['price__sum'] or 0.0, ".2f")
-
-        # discount_manish = format(Manish.objects.filter(date__range=(start_date,end_date)).aggregate(Sum('discount'))['discount__sum']  or 0.0, ".2f")
-        # discount_kazim = format(Kazim.objects.filter(date__range=(start_date,end_date)).aggregate(Sum('discount'))['discount__sum']  or 0.0, ".2f")
-        # discount_samay = format(Samay.objects.filter(date__range=(start_date,end_date)).aggregate(Sum('discount'))['discount__sum']  or 0.0, ".2f")
-
-
-
-        # manish_total= rent + float(total_manish) - float(discount_manish)
-        # manish_total=format(manish_total,".2f")
-        # print(total_manish)
-        # print(manish_total)
-        # print(discount_manish)
-        # print()
-
-        # kazim_total= rent + float(total_kazim) - float(discount_kazim)
-        # kazim_total=format(kazim_total ,".2f")
-        # print(total_kazim)
-        # print(kazim_total)
-        # print(discount_kazim)
-
-        # print()
-        # samay_total= rent + float(total_samay) - float(discount_samay)
-        # samay_total=format(samay_total ,".2f")
-        # for i in manish:
-        #     print(i.price)
-
-
         data={
-            # "obj":zip(manish,kazim,samay,descc),
+
             "objs":descc,
             "date":datetime.now(asia_tz).date(),
 
-            # "total_manish":total_manish,
-            # "total_kazim":total_kazim,
-            # "total_samay":total_samay,
-
-            # "discount_manish":discount_manish,
-            # "discount_kazim":discount_kazim,
-            # "discount_samay":discount_samay,
-
-            # "manish_total": manish_total,
-            # "kazim_total": kazim_total,
-            # "samay_total": samay_total,
-            # "total":format(float(manish_total)+float(kazim_total)+float(samay_total),".2f")
         }
 
         return render(request,"download.html",data)
@@ -110,19 +66,7 @@ def download(request):
         return render(request,"download.html",data)
 
 def home(request):
-    # manish=Manish.objects.all()
-    # dest=Description.objects.all()
-    # count=0
-    # for i,j in zip(manish,dest):
-    #     # print(i.price)
-    #     if j.userid == 2:
-    #         Spilt.objects.create(date=i.date, name='manish', desc=j.desc, payerid=2, payment=i.price)
-    #         count+=1
-    #         # print(i.date,j.userid,'manish',j.desc,i.price )
-    #         print(count)
-        # price=int(price)/3
-        # print(price)
-    
+ 
     if User.objects.all().count() > 0:
         today = datetime.now(asia_tz)
 
@@ -146,20 +90,13 @@ def home(request):
 
         # Format dates as MM/DD/YY for debugging or display
         formatted_start_date = start_date.strftime('%Y-%m-%d')
+        name_start_date=start_date.date()
         formatted_end_date = end_date.strftime('%Y-%m-%d')
 
         descc=Description.objects.filter(date__range=(formatted_start_date, formatted_end_date)).prefetch_related('spilts').order_by('-id')
         users = User.objects.exclude(id=1)
         online_users = User.objects.exclude(id=1).filter(profile__is_online=True)
-        # print("users: ",len(online_users),online_users)
-        
-        # Har user ka total expense nikalna
-        # user_expenses = Description.objects.filter(date__range=(formatted_start_date, formatted_end_date),payer__in=users).values('payer','payer').annotate(
-        #     total_amount=Sum('amount')
-        # )
-        # spilt_expense = Spilt.objects.filter(date__range=(formatted_start_date, formatted_end_date)).values('expense','expense').annotate(
-        #     total_amount=Sum('share')
-        # )
+      
         rent_per_user = Decimal(rent) / Decimal(len(online_users)) if len(online_users) > 0 else Decimal(1)
         def get_user_balance(user):
             user_expenses = (
@@ -178,17 +115,11 @@ def home(request):
                 .filter(date__range=(formatted_start_date, formatted_end_date), user=user)
                 .aggregate(total_amount=Sum('amount'))  # aggregate one number
             )
-            # अगर None मिला (no records), तो 0 मान लो
+           
             credit = user_expenses["total_amount"] or Decimal(0)
             debit = spilt_expense["total_amount"] or Decimal(0)
             sharing = equal_share["total_amount"] or Decimal(0)
-            # print(f"User: {user.username}, Credit: {credit}, Debit: {debit}, Sharing: {sharing}")
-            # print(rent_per_user)
-            # total_payment= (Decimal(debit) - Decimal(credit)).quantize(Decimal('0.01'))
-            # if total_payment < 0:
-            #     return (Decimal(total_payment) - Decimal(sharing)).quantize(Decimal('0.01'))
-            # elif total_payment >= 0:
-            #     return (Decimal(total_payment) + Decimal(sharing)).quantize(Decimal('0.01'))
+          
             if user.profile.is_online:
                 user_rent = rent_per_user
             else:
@@ -205,23 +136,15 @@ def home(request):
 
         # print("this is balance :", balances)
         total_balance = sum(b['balance'] for b in balances)
-        # print("this is total balance :", total_balance)
-        # print("Your data user-expense : ",user_expenses)
-        # print("Your data spilt-exoense : ",spilt_expense)
-        # for i in user_expenses:
-        #     print(i["payer"],i["total_amount"])
-        # print("=================================")
-        # for i in spilt_expense:
-        #     print(i["expense"],i["total_amount"])
-        # print("this is balance :",balances)
+
         data={
                 "objs":descc,
                 "online_users": zip_longest(users,balances,fillvalue=0),
-                "start_date":formatted_start_date,
+                "start_date":name_start_date,
                 "total_balance":total_balance,
                 "rent_per_user":rent_per_user.quantize(Decimal('0.01')),
                 "rent_user_count":online_users,
-                "today_date":datetime.now(asia_tz).strftime('%Y-%m-%d'),         
+                "today_date":datetime.now().date(),         
         }
 
         return render(request,"dashboard.html",data)
@@ -246,10 +169,7 @@ def add_expense(request):
                         #    users = User.objects.exclude(id=1).filter(profile__is_online=True)
 
        total_user=len(user_list)
-    #    total_owes=int(amount)/total_user
-        # fallback if no one active -> include all users
 
-    #    users=zip(users,user_list)
               
        amount = Decimal(amount)
        per_share = (amount / Decimal(total_user)).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
@@ -282,10 +202,7 @@ def equalShareSplitor(request):
                         #    users = User.objects.exclude(id=1).filter(profile__is_online=True)
 
        total_user=len(user_list)
-    #    total_owes=int(amount)/total_user
-        # fallback if no one active -> include all users
 
-    #    users=zip(users,user_list)
               
        amount = Decimal(amount)
        per_share = (amount / Decimal(total_user)).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
