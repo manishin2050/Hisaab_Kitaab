@@ -2,3 +2,4 @@
 
 # introduction 
 - this is a website there you can split your expense with your friend.
+- this website have many feature
