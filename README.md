@@ -5,3 +5,5 @@
 - this website have many feature
 
   # python, html
+
+- i used python for backend
