@@ -1,8 +1,12 @@
-# https://hisaab-kitaab-w1qm.onrender.com/
+ https://hisaab-kitaab-w1qm.onrender.com/
+<h1 align="center"> Hisaab Kitaab </h1>
 
 # introduction 
-- this is a website there you can split your expense with your friend.
-- this website have many feature
+- This is a [website](https://hisaab-kitaab-w1qm.onrender.com/) there you can split your expense with your friend.
+- This website have many feature like shoping, split expense
+- Profile Dashboard
+
+### webiste
 
   # python, html
 
