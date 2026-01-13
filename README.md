@@ -7,7 +7,10 @@
 - Profile Dashboard
 
 # Technology
-- 
+- HTML
+- TAILWIND
+- DJANGO(PYTHON)
+- SQLite
 
 # Steps to Run this file
 - step 1
