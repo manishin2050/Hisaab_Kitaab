@@ -6,6 +6,9 @@
 - This website have many feature like shoping, split expense
 - Profile Dashboard
 
+# Technology
+- 
+
 # Steps to Run this file
 - step 1
 -- create virtual envirement
